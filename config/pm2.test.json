@@ -1,0 +1,13 @@
+{
+  "apps": [{
+      "name": "API",
+      "exec_interpreter": "./node_modules/.bin/babel-node",
+      "script": "./app.js",
+      "merge_logs": true,
+      "env": {
+        "NODE_ENV": "test",
+        "PORT": 3001
+      }
+    }
+  ]
+}
