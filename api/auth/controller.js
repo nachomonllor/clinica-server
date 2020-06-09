@@ -86,6 +86,6 @@ function getMenu(roles) {
 }
 
 function containsAdminRole(roles) {
-  return roles.findIndex(role => role.rolename === "Administrador");
+  return roles.findIndex(role => role.name === "Administrador");
 }
 export default AuthController;

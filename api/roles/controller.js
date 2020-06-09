@@ -7,16 +7,16 @@ import _ from 'lodash';
 class RolesController {
   static Fetch(req, res) {
     const { Op } = Sequelize;
-    const attrs = ['id', 'rolename', 'description', 'active'];
-    const search = ['rolename', 'description'];
+    const attrs = ['id', 'name', 'description', 'active'];
+    const search = ['name', 'description'];
     const { filter } = req.query;
     const options = Parametrizer.getOptions(req.query, attrs, search);
     if (filter) {
-      options.where.rolename = {
+      options.where.name = {
         [Op.like]: `%${filter}%`,
       };
     }
-    // options.where.rolename = {
+    // options.where.name = {
     //   [Op.like]: `%${filter}%`,
     // };
     // options.include = [{
@@ -61,7 +61,7 @@ class RolesController {
       })).catch(err => res.status(400).json({ message: RESPONSES.DB_CONNECTION_ERROR.message }));
   }
   static Create(req, res) {
-    const { rolename, description, active } = req.body;
+    const { name, description, active } = req.body;
     db.Role.create(req.body)
       .then((role) => {
         res.status(200).json({
@@ -77,7 +77,7 @@ class RolesController {
       });
   }
   static Update(req, res) {
-    const { rolename, description, active, permissions } = req.body;
+    const { name, description, active, permissions } = req.body;
     const id = +req.params.id;
     if (permissions.length > 0) {
       db.Role.findOne({
@@ -97,7 +97,7 @@ class RolesController {
     } else {
       db.Role.update({
           id,
-          rolename,
+          name,
           description,
           active,
         }, { where: { id } })

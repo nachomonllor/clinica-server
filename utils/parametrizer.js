@@ -4,20 +4,23 @@ class Parametrizer {
   static getOptions(query, attributes) {
     let { filter, sortField, sortDirection } = query;
     const limit = +query.pageSize || 0;
-    const where = {
+
+    let where = {
       active: {
         [Op.eq]: true
       },
     };
+
     const page = +query.pageNumber || 0;
     const offset = (page) * limit;
     const opts = {
       attributes,
-      where,
       order: [
         [sortField, sortDirection],
       ],
     }
+    !query.active ? null : opts.where
+
     if (limit > 0) {
       opts.offset = offset;
       opts.limit = limit;

@@ -5,7 +5,7 @@ export default (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    rolename: {
+    name: {
       type: DataTypes.STRING(20),
       allowNull: false,
       unique: true,
@@ -26,7 +26,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.DATE,
     },
   });
-  Role.associate = (models) => {   
+  Role.associate = (models) => {
     // M:M
     Role.belongsToMany(models.User, {
       through: { model: models.UserRole },

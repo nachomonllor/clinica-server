@@ -15,13 +15,14 @@ class UsersController {
       'active',
       'createdAt',
     ]
+    req.query.active = undefined;
     const options = Parametrizer.getOptions(req.query, attrs)
     roles = roles.map((i) => +i)
 
     options.include = [
       {
         model: db.Role,
-        attributes: ['id', 'rolename'],
+        attributes: ['id', 'name'],
         as: 'roles',
         through: { attributes: [] },
         where: roles.length > 0 ? {
@@ -157,7 +158,7 @@ class UsersController {
   }
   static Delete(req, res) {
     const { id } = req.params
-    db.User.destroy({ where: { id } })
+    db.User.update({ active: false }, { where: { id } })
       .then((result) => {
         if (result === 0) {
           res.status(404).json({
@@ -165,21 +166,21 @@ class UsersController {
           })
         } else {
           res.status(200).json({
-            message: 'El usuario ha sido eliminado!',
+            message: 'El usuario ha sido desactivado!',
           })
         }
       })
-      .catch(Sequelize.ValidationError, (msg) =>
-        res.status(422).json({ message: msg.errors[0].message }),
-      )
-      .catch(Sequelize.ForeignKeyConstraintError, (err) =>
-        res
-          .status(400)
-          .json({
-            message:
-              'El registro no puede ser eliminado por que ya está en uso. Solo puede desactivarlo',
-          }),
-      )
+      // .catch(Sequelize.ValidationError, (msg) =>
+      //   res.status(422).json({ message: msg.errors[0].message }),
+      // )
+      // .catch(Sequelize.ForeignKeyConstraintError, (err) =>
+      //   res
+      //     .status(400)
+      //     .json({
+      //       message:
+      //         'El registro no puede ser eliminado por que ya está en uso. Solo puede desactivarlo',
+      //     }),
+      // )
       .catch((err) =>
         res
           .status(400)
