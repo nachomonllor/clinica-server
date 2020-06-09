@@ -20,10 +20,10 @@
         "SEED": "AAAAB3NzaC1yc2EAAAADAQABAAABAQCOnR8dFU4Y62RgY+wwqwdle/Gpi1yrZtfGzglsf8xDph9zs7kd9BgyGBtBjHkT2CY9E8BLd7D+Wpa2BSv2lohb"
     },
     "production": {
-        "username": "bdcnyfoiywltfu",
-        "password": "71835e1c558c2b60c58b8ee4a0496d08dcd8ed3700c4afce6f72179df24b9396",
-        "database": "d6k19r1ol7o3g8",
-        "host": "ec2-52-202-146-43.compute-1.amazonaws.com",
+        "username": "wmbskzgsseafde",
+        "password": "80d93a5882040e37dbd45655e38e7ec24b25e400fcc86c6c6a420c59a6021082",
+        "database": "d64v5cupa9e0n5",
+        "host": "ec2-23-20-129-146.compute-1.amazonaws.com",
         "dialect": "postgres",
         "port": 5432,
         "use_env_variable": "DATABASE_URL",
