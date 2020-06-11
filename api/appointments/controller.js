@@ -4,19 +4,19 @@ import Parametrizer from '../../utils/parametrizer'
 import RESPONSES from '../../utils/responses'
 import _ from 'lodash'
 
-class TurnsController {
+class AppointmentsController {
   static Fetch(req, res) {
     const id = req.user.id
-    const attrs = ['id', 'turnDate', 'createdAt', 'active'];
-    const search = ['turnDate', 'active'];
+    const attrs = ['id', 'appointmentDate', 'createdAt', 'active'];
+    const search = ['appointmentDate', 'active'];
     const options = Parametrizer.getOptions(req.query, attrs, search)
-    db.Turn.findAndCountAll({
+    db.Appointment.findAndCountAll({
       where: {
         UserId: id,
       },
     })
-      .then((turns) => {
-        res.status(200).json(Parametrizer.responseOk(turns, options))
+      .then((appointments) => {
+        res.status(200).json(Parametrizer.responseOk(appointments, options))
       })
       .catch(Sequelize.ValidationError, (msg) =>
         res.status(422).json({
@@ -28,12 +28,12 @@ class TurnsController {
       })
   }
   static Create(req, res) {
-    const { SpecialityId, ProfesionalId, turnDate } = req.body
-    db.Turn.create(req.body)
-      .then((turn) => {
+    const { CategoryId, ProfesionalId, appointmentDate } = req.body
+    db.Appointment.create(req.body)
+      .then((appointment) => {
         res.status(200).json({
           ok: true,
-          turn,
+          appointment,
         })
       })
       .catch(Sequelize.ValidationError, (msg) => {
@@ -91,4 +91,4 @@ class TurnsController {
   }
 }
 
-export default TurnsController
+export default AppointmentsController

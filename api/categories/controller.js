@@ -4,7 +4,7 @@ import Parametrizer from '../../utils/parametrizer'
 import RESPONSES from '../../utils/responses'
 import _ from 'lodash'
 
-class SpecialitiesController {
+class CategoriesController {
   static Fetch(req, res) {
     const { Op } = Sequelize
     const attrs = ['id', 'name', 'active']
@@ -16,7 +16,7 @@ class SpecialitiesController {
         [Op.like]: `%${filter}%`,
       }
     }
-    db.Speciality.findAndCountAll(options)
+    db.Category.findAndCountAll(options)
       .then((data) => {
         res.status(200).json(Parametrizer.responseOk(data, options))
       })
@@ -31,7 +31,7 @@ class SpecialitiesController {
   }
   static FetchOne(req, res) {
     const id = +req.params.id
-    db.Speciality.findOne({
+    db.Category.findOne({
       where: {
         id,
       },
@@ -68,7 +68,7 @@ class SpecialitiesController {
   }
   static Create(req, res) {
     const { name, active } = req.body
-    db.Speciality.create(req.body)
+    db.Category.create(req.body)
       .then((speciality) => {
         res.status(200).json({
           ok: true,
@@ -86,7 +86,7 @@ class SpecialitiesController {
     const { specialityname, description, active, permissions } = req.body
     const id = +req.params.id
     if (permissions.length > 0) {
-      db.Speciality.findOne({
+      db.Category.findOne({
         where: {
           id,
         },
@@ -94,7 +94,7 @@ class SpecialitiesController {
         res.status(200).json(speciality)
       })
     } else {
-      db.Speciality.update(
+      db.Category.update(
         {
           id,
           specialityname,
@@ -117,7 +117,7 @@ class SpecialitiesController {
   }
   static Delete(req, res) {
     const { id } = req.params
-    db.Speciality.destroy({ where: { id } })
+    db.Category.destroy({ where: { id } })
       .then((result) => {
         if (result === 0) {
           res.status(404).json({
@@ -146,4 +146,4 @@ class SpecialitiesController {
 }
 
 
-export default SpecialitiesController
+export default CategoriesController

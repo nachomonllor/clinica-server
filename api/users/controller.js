@@ -15,7 +15,7 @@ class UsersController {
       'active',
       'createdAt',
     ]
-    req.query.active = undefined;
+    req.query.active = undefined
     const options = Parametrizer.getOptions(req.query, attrs)
     roles = roles.map((i) => +i)
 
@@ -25,11 +25,14 @@ class UsersController {
         attributes: ['id', 'name'],
         as: 'roles',
         through: { attributes: [] },
-        where: roles.length > 0 ? {
-          [Op.or]: {
-            id: roles,
-          },
-        } : null
+        where:
+          roles.length > 0
+            ? {
+                [Op.or]: {
+                  id: roles,
+                },
+              }
+            : null,
       },
     ]
     db.User.findAndCountAll(options)
@@ -88,47 +91,62 @@ class UsersController {
       })
   }
   static Create(req, res) {
-    const { fullname, lastname, email, password, phone, img, roles } = req.body
+    const { fullname, lastname, email, password, phone, img, roles, categories } = req.body
     const is_verified = false
     const active = true
-    db.User.create({
-      fullname,
-      lastname,
-      email,
-      password,
-      phone,
-      is_verified,
-      img,
-      active,
-    })
-      .then((user) => {
-        user.password = ':)'
-        db.Role.findAll({
-          where: {
-            [Op.or]: {
-              id: roles
-            }
+    db.sequelize
+      .transaction({ autocommit: false })
+      .then(async (t) => {
+        const userModel = await db.User.create(
+          {
+            fullname,
+            lastname,
+            email,
+            password,
+            phone,
+            is_verified,
+            img,
+            active,
           },
+          { transaction: t },
+        )
+        userModel.password = ':P'
+        const rolesModel = await db.Role.findAll(
+          {
+            where: {
+              [Op.or]: {
+                id: roles,
+              },
+            },
+          },
+          { transaction: t },
+        )
+        const categoriesModel = await db.Category.findAll(
+          {
+            where: {
+              [Op.or]: {
+                id: categories,
+              },
+            },
+          },
+          { transaction: t },
+        )
+        await userModel.setRoles(rolesModel, { transaction: t })
+        await userModel.setCategories(categoriesModel, { transaction: t })
+        t.commit()
+        return userModel
+      })
+      .then((user) => {
+        res.status(200).json({
+          ok: true,
+          user,
         })
-          .then((roles) => {
-            user.setRoles(roles).then(() => {
-              res.status(200).json(user)
-            })
-          })
-          .catch((err) => {
-            res
-              .status(400)
-              .json({ message: RESPONSES.DB_CONNECTION_ERROR.message + err })
-          })
       })
-      .catch(Sequelize.ValidationError, (msg) => {
-        res.status(422).json({ message: msg.message })
-      })
-      .catch((err) =>
+      .catch((err) => {
         res
           .status(400)
-          .json({ message: RESPONSES.DB_CONNECTION_ERROR.message + err }),
-      )
+          .json({ description: RESPONSES.DB_CONNECTION_ERROR + err })
+      })
   }
   static Update(req, res) {
     const { fullname, lastname, email, password, phone, img } = req.body

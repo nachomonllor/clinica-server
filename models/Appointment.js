@@ -1,5 +1,5 @@
 export default (sequelize, DataTypes) => {
-  const Turn = sequelize.define('Turn', {
+  const Appointment = sequelize.define('Appointment', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -13,7 +13,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    SpecialityId: {
+    CategoryId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -36,20 +36,20 @@ export default (sequelize, DataTypes) => {
     },
   });
   // relaciones entre objetos
-  Turn.associate = (models) => {
-    Turn.belongsTo(models.Speciality, {
-      foreignKey: 'SpecialityId',
+  Appointment.associate = (models) => {
+    Appointment.belongsTo(models.Category, {
+      foreignKey: 'CategoryId',
       targetKey: 'id',
     });
-    Turn.belongsTo(models.User, {
+    Appointment.belongsTo(models.User, {
       foreignKey: 'UserId',
       targetKey: 'id',
     });
-    Turn.belongsTo(models.User, {
+    Appointment.belongsTo(models.User, {
       foreignKey: 'ProfesionalId',
       targetKey: 'id',
     });
   };
 
-  return Turn;
+  return Appointment;
 };

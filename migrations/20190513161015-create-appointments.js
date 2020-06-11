@@ -1,6 +1,6 @@
 // Sequelize es un ORM (Object Relational Mapper)
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Turns', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Appointments', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -14,11 +14,11 @@ module.exports = {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    SpecialityId: {
+    CategoryId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    turnDate: {
+    appointmentDate: {
       type: Sequelize.DATE,
       allowNull: false,
     },
@@ -36,5 +36,5 @@ module.exports = {
       allowNull: false,
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Turns'),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Appointments'),
 };

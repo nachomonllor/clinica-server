@@ -1,5 +1,5 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Specialities', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('Categories', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -11,9 +11,8 @@ module.exports = {
     },
     active: {
       type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: true
+      allowNull: false
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('Specialities'),
+  down: (queryInterface, Sequelize) => queryInterface.dropTable('Categories'),
 };

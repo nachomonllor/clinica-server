@@ -4,11 +4,11 @@ module.exports = {
     return (
       queryInterface.addConstraint(
         // Paciente
-        'Turns',
+        'Appointments',
         ['UserId'],
         {
           type: 'foreign key',
-          name: 'fk_Turns_UserId',
+          name: 'fk_Appointments_UserId',
           references: {
             table: 'Users', // name of Target model
             field: 'id', // key in Target model that we're referencing
@@ -17,9 +17,9 @@ module.exports = {
           allowNull: false,
         },
       ),
-      queryInterface.addConstraint('Turns', ['ProfesionalId'], {
+      queryInterface.addConstraint('Appointments', ['ProfesionalId'], {
         type: 'foreign key',
-        name: 'fk_Turns_ProfesionalId',
+        name: 'fk_Appointments_ProfesionalId',
         references: {
           table: 'Users', // name of Target model
           field: 'id', // key in Target model that we're referencing
@@ -27,11 +27,11 @@ module.exports = {
         onDelete: 'CASCADE',
         allowNull: false,
       }),
-      queryInterface.addConstraint('Turns', ['SpecialityId'], {
+      queryInterface.addConstraint('Appointments', ['CategoryId'], {
         type: 'foreign key',
-        name: 'fk_Turns_SpecialityId',
+        name: 'fk_Appointments_CategoryId',
         references: {
-          table: 'Specialities', // name of Target model
+          table: 'Categories', // name of Target model
           field: 'id', // key in Target model that we're referencing
         },
         onDelete: 'CASCADE',
@@ -41,9 +41,9 @@ module.exports = {
   },
   down(queryInterface) {
     return (
-      queryInterface.removeConstraint('Turns', 'fk_Turns_UserId'),
-      queryInterface.removeConstraint('Turns', 'fk_Turns_ProfesionalId'),
-      queryInterface.removeConstraint('Turns', 'fk_Turns_SpecialityId')
+      queryInterface.removeConstraint('Appointments', 'fk_Appointments_UserId'),
+      queryInterface.removeConstraint('Appointments', 'fk_Appointments_ProfesionalId'),
+      queryInterface.removeConstraint('Appointments', 'fk_Appointments_CategoryId')
     )
   },
 }
