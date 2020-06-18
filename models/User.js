@@ -69,6 +69,11 @@ export default (sequelize, DataTypes) => {
     User.hasOne(models.Appointment, {
       foreignKey: 'ProfesionalId'
     });
+
+    // 1:1 Profesional
+    User.hasMany(models.Schedule, {
+      foreignKey: 'ProfesionalId'
+    });
   };
   // Method 3 via the direct method
   User.beforeCreate((user, options) => {

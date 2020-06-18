@@ -7,10 +7,28 @@ import _ from 'lodash'
 class AppointmentsController {
   static Fetch(req, res) {
     const id = req.user.id
-    const attrs = ['id', 'appointmentDate', 'createdAt', 'active'];
-    const search = ['appointmentDate', 'active'];
+    const attrs = [
+      'id',
+      'CategoryId',
+      'ProfesionalId',
+      'appointmentDate',
+      'createdAt',
+      'active',
+    ]
+    const search = ['appointmentDate', 'active']
     const options = Parametrizer.getOptions(req.query, attrs, search)
     db.Appointment.findAndCountAll({
+      attributes: attrs,
+      include: [
+        {
+          model: db.Category,
+        },
+        {
+          model: db.User,
+          as: 'professional',
+          attributes: ['id', 'fullname', 'lastname'],
+        },
+      ],
       where: {
         UserId: id,
       },
@@ -28,7 +46,8 @@ class AppointmentsController {
       })
   }
   static Create(req, res) {
-    const { CategoryId, ProfesionalId, appointmentDate } = req.body
+    const body = req.body
+    body.UserId = req.user.id
     db.Appointment.create(req.body)
       .then((appointment) => {
         res.status(200).json({

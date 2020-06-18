@@ -91,7 +91,7 @@ class UsersController {
       })
   }
   static Create(req, res) {
-    const { fullname, lastname, email, password, phone, img, roles, categories } = req.body
+    const { fullname, lastname, email, password, phone, img, roles, categories, schedule } = req.body
     const is_verified = false
     const active = true
     db.sequelize
@@ -121,18 +121,27 @@ class UsersController {
           },
           { transaction: t },
         )
-        const categoriesModel = await db.Category.findAll(
-          {
-            where: {
-              [Op.or]: {
-                id: categories,
+        await userModel.setRoles(rolesModel, { transaction: t })
+        if(categories) {
+          const categoriesModel = await db.Category.findAll(
+            {
+              where: {
+                [Op.or]: {
+                  id: categories,
+                },
               },
             },
-          },
-          { transaction: t },
-        )
-        await userModel.setRoles(rolesModel, { transaction: t })
-        await userModel.setCategories(categoriesModel, { transaction: t })
+            { transaction: t },
+          )
+          await userModel.setCategories(categoriesModel, { transaction: t })
+          await db.Schedule.bulkCreate(
+            schedule.map(i => {
+              i.ProfesionalId = userModel.id
+              return i;
+            })
+            , { transaction: t });
+
+        }
         t.commit()
         return userModel
       })

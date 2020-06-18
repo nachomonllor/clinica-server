@@ -1,24 +1,24 @@
 export default (sequelize, DataTypes) => {
-  const Appointment = sequelize.define('Appointment', {
+  const Schedule = sequelize.define('Schedule', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    UserId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     ProfesionalId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    CategoryId: {
+    day: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    appointmentDate: {
-      type: DataTypes.DATE,
+    timeStart: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    timeEnd: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     active: {
@@ -36,21 +36,13 @@ export default (sequelize, DataTypes) => {
     },
   });
   // relaciones entre objetos
-  Appointment.associate = (models) => {
-    Appointment.belongsTo(models.Category, {
-      foreignKey: 'CategoryId',
-      targetKey: 'id',
-    });
-    Appointment.belongsTo(models.User, {
-      foreignKey: 'UserId',
-      targetKey: 'id',
-    });
-    Appointment.belongsTo(models.User, {
+  Schedule.associate = (models) => {
+    Schedule.belongsTo(models.User, {
       foreignKey: 'ProfesionalId',
-      as: 'professional',
       targetKey: 'id',
     });
+
   };
 
-  return Appointment;
+  return Schedule;
 };
