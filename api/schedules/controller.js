@@ -4,50 +4,63 @@ import Parametrizer from '../../utils/parametrizer'
 import RESPONSES from '../../utils/responses'
 import _ from 'lodash'
 
-class AppointmentsController {
-  static Fetch(req, res) {
+class SchedulesController {
+  static async Fetch(req, res) {
     const id = req.user.id
     const attrs = [
       'id',
+      'PatientId',
       'CategoryId',
       'ProfessionalId',
       'appointmentDate',
       'createdAt',
-      'active',
+      'status',
     ]
-    db.Appointment.findAndCountAll({
-      attributes: ['PatientId', 'ProfessionalId', 'CategoryId'],
-      include: {
-        model: db.Patient,
-        as: 'patient',
-        attributes: ['id'],
+    const professionalModel = await db.Professional.findOne({
+      where: {
+        UserId: req.user.id
       }
+    });
+    db.Appointment.findAndCountAll({
+      attributes: attrs,
+      include: [
+        {
+          model: db.Category,
+        },
+        {
+          model: db.Patient,
+          attributes: ['id'],
+          include: [
+            {
+              model: db.User,
+              attributes: ['id', 'firstname', 'lastname']
+            }
+          ]
+        },
+        {
+          model: db.Professional,
+          as: 'professional',
+          attributes: ['id'],
+          include: [
+            {
+              model: db.User,
+              attributes: ['id', 'firstname', 'lastname']
+            }
+          ],
+          where: {
+            id: professionalModel.id
+          }
+        },
+      ]
     })
-      .then((appointments) => {
-        res.status(200).json(appointments.rows)
+      .then((schedules) => {
+        res.status(200).json(schedules.rows)
       })
       .catch(Sequelize.ValidationError, (msg) =>
         res.status(422).json({
           message: msg.errors[0].message,
         }),
       )
-      .catch((err) => {
-        res.status(400).json({ message: RESPONSES.DB_CONNECTION_ERROR.message })
-      })
-  }
-  static Create(req, res) {
-    const body = req.body
-    body.UserId = req.user.id
-    db.Appointment.create(req.body)
-      .then((appointment) => {
-        res.status(200).json({
-          ok: true,
-          appointment,
-        })
-      })
-      .catch(Sequelize.ValidationError, (msg) => {
-        res.status(422).json({ message: msg.original.message })
-      })
       .catch((err) => {
         res.status(400).json({ message: RESPONSES.DB_CONNECTION_ERROR.message })
       })
@@ -60,12 +73,7 @@ class AppointmentsController {
         where: {
           id,
         },
-        include: [
-          {
-            model: db.Permission,
-            as: 'Permissions',
-          },
-        ],
+
       }).then((role) => {
         role.setPermissions([5, 6])
         res.status(200).json(role)
@@ -100,4 +108,4 @@ class AppointmentsController {
   }
 }
 
-export default AppointmentsController
+export default SchedulesController

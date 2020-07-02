@@ -11,7 +11,10 @@ export default (sequelize, DataTypes) => {
     },
   }, {timestamps: false});
   Patient.associate = (models) => {
-
+    // 1:1
+    Patient.belongsTo(models.User, {
+      foreignKey: 'UserId',
+    });
     Patient.hasMany(models.Appointment, {
       foreignKey: 'PatientId',
     })

@@ -1,9 +1,8 @@
 import express from 'express';
-import TurnsController from './controller';
+import SchedulesController from './controller';
 import mdw from '../../middlewares/authentication';
 
 const app = express();
-app.get('/', [mdw.verifyToken], TurnsController.Fetch);
-app.post('/', [mdw.verifyToken], TurnsController.Create);
-app.put('/:id', [mdw.verifyToken], TurnsController.Update);
+app.get('/', [mdw.verifyToken], SchedulesController.Fetch);
+app.put('/:id', [mdw.verifyToken], SchedulesController.Update);
 export default app;
