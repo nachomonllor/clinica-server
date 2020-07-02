@@ -1,39 +1,35 @@
 export default (sequelize, DataTypes) => {
-  const Role = sequelize.define('Role', {
+  const Question = sequelize.define('Question', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING(20),
+    QuestionId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
-      lowercase: true,
     },
     description: {
-      type: DataTypes.STRING(100),
-      allowNull: true,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: true
     },
     createdAt: {
       type: DataTypes.DATE,
+      allowNull: false,
     },
     updatedAt: {
       type: DataTypes.DATE,
+      allowNull: false,
     },
   });
-  Role.associate = (models) => {
-    // M:M
-    Role.belongsToMany(models.User, {
-      through: { model: models.UserRole },
-      as: 'users',
-      foreignKey: 'RoleId',
-    });
+  Question.associate = (models) => {
+
   };
 
-  return Role;
+  return Question;
 };

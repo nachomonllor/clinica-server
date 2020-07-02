@@ -8,32 +8,31 @@ class CategoriesController {
   static Fetch(req, res) {
     const { Op } = Sequelize
     const attrs = ['id', 'name', 'active']
-    const search = ['name']
-    const { filter } = req.query
-    const options = Parametrizer.getOptions(req.query, attrs, search)
-    if (filter) {
-      options.where.name = {
-        [Op.like]: `%${filter}%`,
-      }
-    }
-    options.include = [
-      {
-        model: db.User,
-        as: 'users',
-        attributes: ['id', 'fullname', 'lastname', 'img', 'email'],
-        include: [
-          {
-            model: db.Schedule,
+    db.Category.findAndCountAll({
+      attributes: attrs,
+      include: [
+        {
+          model: db.Professional,
+          as: 'professionals',
+          through: {
+            attributes: ['id', 'UserId', 'CategoryId'],
           },
-        ],
-        through: {
-          attributes: ['id', 'UserId', 'CategoryId'],
+          include: [
+            {
+              model: db.TimeSlot,
+              as: 'timeslot'
+            },
+            {
+              model: db.User,
+              attributes: ['id', 'firstname', 'lastname', 'img', 'email'],
+            }
+          ],
+
         },
-      },
-    ]
-    db.Category.findAndCountAll(options)
+      ]
+    })
       .then(data => {
-        res.status(200).json(Parametrizer.responseOk(data, options))
+        res.status(200).json(data.rows)
       })
       .catch(Sequelize.ValidationError, (msg) =>
         res.status(422).json({ message: msg.errors[0].message }),

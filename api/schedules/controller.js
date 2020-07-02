@@ -15,26 +15,16 @@ class AppointmentsController {
       'createdAt',
       'active',
     ]
-    const search = ['appointmentDate', 'active']
-    const options = Parametrizer.getOptions(req.query, attrs, search)
     db.Appointment.findAndCountAll({
-      attributes: attrs,
-      include: [
-        {
-          model: db.Category,
-        },
-        {
-          model: db.User,
-          as: 'professional',
-          attributes: ['id', 'firstname', 'lastname'],
-        },
-      ],
-      where: {
-        UserId: id,
-      },
+      attributes: ['PatientId', 'ProfessionalId', 'CategoryId'],
+      include: {
+        model: db.Patient,
+        as: 'patient',
+        attributes: ['id'],
+      }
     })
       .then((appointments) => {
-        res.status(200).json(Parametrizer.responseOk(appointments, options))
+        res.status(200).json(appointments.rows)
       })
       .catch(Sequelize.ValidationError, (msg) =>
         res.status(422).json({
@@ -45,21 +35,10 @@ class AppointmentsController {
         res.status(400).json({ message: RESPONSES.DB_CONNECTION_ERROR.message })
       })
   }
-  static async Create(req, res) {
+  static Create(req, res) {
     const body = req.body
-    const patientModel = await db.Patient.findOne({
-      where: {
-        UserId: req.user.id
-      }
-    });
-    const professionalModel = await db.Professional.findOne({
-      where: {
-        UserId: body.ProfessionalId
-      }
-    });
-    body.PatientId = patientModel.id;
-    body.ProfessionalId = professionalModel.id;
-    db.Appointment.create(body)
+    body.UserId = req.user.id
+    db.Appointment.create(req.body)
       .then((appointment) => {
         res.status(200).json({
           ok: true,

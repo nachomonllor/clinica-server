@@ -1,11 +1,11 @@
 export default (sequelize, DataTypes) => {
-  const Schedule = sequelize.define('Schedule', {
+  const TimeSlot = sequelize.define('TimeSlot', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    ProfesionalId: {
+    ProfessionalId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
@@ -36,13 +36,13 @@ export default (sequelize, DataTypes) => {
     },
   });
   // relaciones entre objetos
-  Schedule.associate = (models) => {
-    Schedule.belongsTo(models.User, {
-      foreignKey: 'ProfesionalId',
+  TimeSlot.associate = (models) => {
+    TimeSlot.belongsTo(models.Professional, {
+      foreignKey: 'ProfessionalId',
       targetKey: 'id',
     });
 
   };
 
-  return Schedule;
+  return TimeSlot;
 };

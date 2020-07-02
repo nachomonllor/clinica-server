@@ -1,12 +1,12 @@
 // Sequelize es un ORM (Object Relational Mapper)
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.createTable('Schedules', {
+  up: (queryInterface, Sequelize) => queryInterface.createTable('TimeSlots', {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    ProfesionalId: {
+    ProfessionalId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
@@ -15,11 +15,11 @@ module.exports = {
       allowNull: false,
     },
     timeStart: {
-      type: Sequelize.STRING(5),
+      type: Sequelize.STRING(9),
       allowNull: false,
     },
     timeEnd: {
-      type: Sequelize.STRING(5),
+      type: Sequelize.STRING(9),
       allowNull: false,
     },
     active: {

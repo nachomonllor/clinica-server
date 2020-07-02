@@ -6,11 +6,11 @@ module.exports = {
       autoIncrement: true,
       primaryKey: true,
     },
-    UserId: {
+    ProfessionalId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    ProfesionalId: {
+    PatientId: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },

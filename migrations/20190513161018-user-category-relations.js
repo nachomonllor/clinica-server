@@ -2,20 +2,20 @@
 module.exports = {
   up(queryInterface) {
     return queryInterface.addConstraint(
-        'UserCategories', ['UserId'], {
+        'ProfessionalCategories', ['UserId'], {
           type: 'foreign key',
-          name: 'fk_UserCategories_UserId',
+          name: 'fk_ProfessionalCategories_UserId',
           references: {
-            table: 'Users', // name of Target model
+            table: 'Professionals', // name of Target model
             field: 'id', // key in Target model that we're referencing
           },
           onDelete: 'CASCADE',
           allowNull: false,
         },
       ), queryInterface.addConstraint(
-        'UserCategories', ['CategoryId'], {
+        'ProfessionalCategories', ['CategoryId'], {
           type: 'foreign key',
-          name: 'fk_UserCategories_CategoryId',
+          name: 'fk_ProfessionalCategories_CategoryId',
           references: {
             table: 'Categories', // name of Target model
             field: 'id', // key in Target model that we're referencing
@@ -26,7 +26,7 @@ module.exports = {
       );
   },
   down(queryInterface) {
-    return queryInterface.removeConstraint('UserCategories', 'fk_UserCategories_UserId'),
-      queryInterface.removeConstraint('UserCategories', 'fk_UserCategories_CategoryId');
+    return queryInterface.removeConstraint('ProfessionalCategories', 'fk_ProfessionalCategories_UserId'),
+      queryInterface.removeConstraint('ProfessionalCategories', 'fk_ProfessionalCategories_CategoryId');
   },
 };

@@ -3,13 +3,14 @@ module.exports = {
   up(queryInterface) {
     return (
       queryInterface.addConstraint(
-        'Schedules',
-        ['ProfesionalId'],
+        // Paciente
+        'TimeSlots',
+        ['ProfessionalId'],
         {
           type: 'foreign key',
-          name: 'fk_Schedules_ProfesionalId',
+          name: 'fk_TimeSlots_ProfessionalId',
           references: {
-            table: 'Users', // name of Target model
+            table: 'Professionals', // name of Target model
             field: 'id', // key in Target model that we're referencing
           },
           onDelete: 'CASCADE',
@@ -20,7 +21,7 @@ module.exports = {
   },
   down(queryInterface) {
     return (
-      queryInterface.removeConstraint('Schedules', 'fk_Schedules_ProfesionalId')
+      queryInterface.removeConstraint('TimeSlots', 'fk_TimeSlots_ProfessionalId')
     )
   },
 }

@@ -5,23 +5,23 @@ module.exports = {
       queryInterface.addConstraint(
         // Paciente
         'Appointments',
-        ['UserId'],
+        ['PatientId'],
         {
           type: 'foreign key',
-          name: 'fk_Appointments_UserId',
+          name: 'fk_Appointments_PatientId',
           references: {
-            table: 'Users', // name of Target model
+            table: 'Patients', // name of Target model
             field: 'id', // key in Target model that we're referencing
           },
           onDelete: 'CASCADE',
           allowNull: false,
         },
       ),
-      queryInterface.addConstraint('Appointments', ['ProfesionalId'], {
+      queryInterface.addConstraint('Appointments', ['ProfessionalId'], {
         type: 'foreign key',
-        name: 'fk_Appointments_ProfesionalId',
+        name: 'fk_Appointments_ProfessionalId',
         references: {
-          table: 'Users', // name of Target model
+          table: 'Professionals', // name of Target model
           field: 'id', // key in Target model that we're referencing
         },
         onDelete: 'CASCADE',
@@ -41,8 +41,8 @@ module.exports = {
   },
   down(queryInterface) {
     return (
-      queryInterface.removeConstraint('Appointments', 'fk_Appointments_UserId'),
-      queryInterface.removeConstraint('Appointments', 'fk_Appointments_ProfesionalId'),
+      queryInterface.removeConstraint('Appointments', 'fk_Appointments_PatientId'),
+      queryInterface.removeConstraint('Appointments', 'fk_Appointments_ProfessionalId'),
       queryInterface.removeConstraint('Appointments', 'fk_Appointments_CategoryId')
     )
   },

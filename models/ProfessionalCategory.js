@@ -2,7 +2,7 @@ import * as bcrypt from 'bcryptjs';
 
 export default (sequelize, DataTypes) => {
 
-  const UserCategory = sequelize.define('UserCategory', {
+  const ProfessionalCategory = sequelize.define('ProfessionalCategory', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -16,32 +16,26 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-    },
-  });
-  UserCategory.associate = (models) => {
+  }, {timestamps: false});
+  ProfessionalCategory.associate = (models) => {
     // 1:M
     // User.belongsTo(models.Team, {
     //   foreignKey: 'teamId',
     // });
     // User.belongsToMany(Role, { through: 'RoleUser' }),
 
-    // UserCategory.belongsTo(models.User, {
+    // ProfessionalCategory.belongsTo(models.User, {
     //   foreignKey: 'UserId',
     //   targetKey: 'id',
     // });
-    // UserCategory.belongsTo(models.Category, {
+    // ProfessionalCategory.belongsTo(models.Category, {
     //   foreignKey: 'CategoryId',
     //   targetKey: 'id',
     // });
   };
   // Method 3 via the direct method
-  UserCategory.beforeCreate((UserCategory, options) => {
+  ProfessionalCategory.beforeCreate((ProfessionalCategory, options) => {
 
   });
-  return UserCategory;
+  return ProfessionalCategory;
 };

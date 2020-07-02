@@ -5,7 +5,7 @@ module.exports = {
       autoIncrement: true,
       primaryKey: true,
     },
-    fullname: {
+    firstname: {
       type: Sequelize.STRING(30),
       allowNull: false,
     },
@@ -27,14 +27,16 @@ module.exports = {
       type: Sequelize.STRING(100),
       allowNull: true,
     },
-    google: {
-      type: Sequelize.STRING,
-      allowNull: true,
+    role: {
+      type: Sequelize.INTEGER,
+      values: [
+        1, // ADMIN_ROLE,
+        2, // PROFESSIONAL_ROLE',
+        3 // PATIENT_ROLE
+      ],
+      defaultValue: 3,
+      allowNull: false,
     },
-    // roles: {
-    //   type: Sequelize.ARRAY(Sequelize.STRING),
-    //   defaultValue: null
-    // },
     active: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
@@ -47,6 +49,6 @@ module.exports = {
       allowNull: true,
       type: Sequelize.DATE,
     },
-  }),
+  }, {timestamps: false}),
   down: (queryInterface, Sequelize) => queryInterface.dropTable('Users'),
 };

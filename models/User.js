@@ -1,14 +1,15 @@
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs'
 
 export default (sequelize, DataTypes) => {
-  const validRoles = ['ADMIN_ROLE', 'PROFESIONAL_ROLE', 'PATIENT_ROLE']
+  //1=ADMIN 2=PROFESSIONAL 3=PATIENT
+  const validRoles = [1, 2, 3]
   const User = sequelize.define('User', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    fullname: {
+    firstname: {
       type: DataTypes.STRING(30),
       allowNull: false,
     },
@@ -21,12 +22,12 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       lowercase: true,
       validate: {
-        isEmail: true
+        isEmail: true,
       },
       unique: {
         args: true,
-        msg: 'El email no esta disponible, elija otro!'
-      }
+        msg: 'El email no esta disponible, elija otro!',
+      },
     },
     password: {
       type: DataTypes.STRING(100),
@@ -36,10 +37,15 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING(100),
       allowNull: true,
     },
+    role: {
+      type: DataTypes.INTEGER,
+      values: validRoles,
+      defaultValue: 2,
+    },
     active: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
-      default: false
+      default: false,
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -47,44 +53,32 @@ export default (sequelize, DataTypes) => {
     updatedAt: {
       type: DataTypes.DATE,
     },
-  });
+  })
   User.associate = (models) => {
-    // M:M
-    User.belongsToMany(models.Role, {
-      through: { model: models.UserRole },
-      as: 'roles',
-      foreignKey: 'UserId',
-    });
-    // M:M
-    User.belongsToMany(models.Category, {
-      through: { model: models.UserCategory },
-      as: 'categories',
-      foreignKey: 'UserId',
-    });
-
     // 1:1
-    User.hasOne(models.Appointment, {
-      foreignKey: 'UserId'
-    });
-    User.hasOne(models.Appointment, {
-      foreignKey: 'ProfesionalId'
-    });
-
-    // 1:1 Profesional
-    User.hasMany(models.Schedule, {
-      foreignKey: 'ProfesionalId'
-    });
-  };
+    User.hasOne(models.Professional, {
+      foreignKey: 'UserId',
+    })
+    User.hasOne(models.Patient, {
+      foreignKey: 'UserId',
+    })
+  }
   // Method 3 via the direct method
   User.beforeCreate((user, options) => {
     if (!user.changed('password')) {
-      return sequelize.Promise.reject("not modified");
+      return sequelize.Promise.reject('not modified')
     }
-
     if (user.password) {
-      user.password = bcrypt.hashSync(user.password, 10);
+      user.password = bcrypt.hashSync(user.password, 10)
     }
+  })
 
-  });
-  return User;
-};
+  User.beforeUpdate((user, options) => {
+    if (user.changed('password')) {
+      if (user.password) {
+        user.password = bcrypt.hashSync(user.password, 10)
+      }
+    }
+  })
+  return User
+}

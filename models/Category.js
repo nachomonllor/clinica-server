@@ -22,9 +22,9 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'CategoryId'
     });
     // M:M
-    Category.belongsToMany(models.User, {
-      through: { model: models.UserCategory },
-      as: 'users',
+    Category.belongsToMany(models.Professional, {
+      through: { model: models.ProfessionalCategory },
+      as: 'professionals',
       foreignKey: 'CategoryId',
     });
   };
