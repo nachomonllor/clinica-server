@@ -29,6 +29,11 @@ export default (sequelize, DataTypes) => {
         msg: 'El email no esta disponible, elija otro!',
       },
     },
+    is_verified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     password: {
       type: DataTypes.STRING(100),
       allowNull: false,

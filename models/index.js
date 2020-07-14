@@ -22,6 +22,7 @@ sequelize = new Sequelize({
   host: config.host,
   database: config.database,
   logging: true,
+  ssl: config.ssl
 });
 
 fs

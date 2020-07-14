@@ -5,6 +5,8 @@ import roleRoutes from './roles/routes';
 import categoryRoutes from './categories/routes';
 import appointmentRoutes from './appointments/routes';
 import scheduleRoutes from './schedules/routes';
+import reviewRoutes from './reviews/routes';
+
 const app = express();
 
 app.use('/auth', authRoutes);
@@ -13,4 +15,6 @@ app.use('/role', roleRoutes);
 app.use('/category', categoryRoutes);
 app.use('/appointment', appointmentRoutes);
 app.use('/schedule', scheduleRoutes);
+app.use('/review', reviewRoutes);
+
 export default app;

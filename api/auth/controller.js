@@ -10,12 +10,20 @@ const { SEED } = require('../../config/config')[node_env]
 
 class AuthController {
   static Login(req, res) {
+    const { Op } = Sequelize;
     const { body } = req
     db.User.findOne({
         where: {
           email: body.email
         },
       }).then(user => {
+        if (!user.is_verified) {
+          return res.status(403).json({
+            ok: false,
+            message: 'Forbidden',
+            errors: 'Forbidden',
+          })
+        }
         if (!user) {
           return res.status(400).json({
             ok: false,

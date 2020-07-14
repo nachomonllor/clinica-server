@@ -26,6 +26,14 @@ module.exports = {
       type: Sequelize.INTEGER,
       allowNull: false
     },
+    reviewPatient: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    reviewProfessional: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

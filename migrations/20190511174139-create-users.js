@@ -19,6 +19,11 @@ module.exports = {
       unique: true,
       lowercase: true,
     },
+    is_verified: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
     password: {
       type: Sequelize.STRING(100),
       allowNull: false,

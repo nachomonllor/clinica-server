@@ -17,9 +17,9 @@ class AppointmentsController {
     ]
     const patientModel = await db.Patient.findOne({
       where: {
-        UserId: req.user.id
-      }
-    });
+        UserId: req.user.id,
+      },
+    })
     db.Appointment.findAndCountAll({
       attributes: attrs,
       include: [
@@ -33,9 +33,9 @@ class AppointmentsController {
           include: [
             {
               model: db.User,
-              attributes: ['id', 'firstname', 'lastname']
-            }
-          ]
+              attributes: ['id', 'firstname', 'lastname'],
+            },
+          ],
         },
       ],
       where: {
@@ -56,19 +56,19 @@ class AppointmentsController {
   }
   static async Create(req, res) {
     const body = req.body
-    body.status = 1;
+    body.status = 1
     const patientModel = await db.Patient.findOne({
       where: {
-        UserId: req.user.id
-      }
-    });
+        UserId: req.user.id,
+      },
+    })
     const professionalModel = await db.Professional.findOne({
       where: {
-        UserId: body.ProfessionalId
-      }
-    });
-    body.PatientId = patientModel.id;
-    body.ProfessionalId = professionalModel.id;
+        UserId: body.ProfessionalId,
+      },
+    })
+    body.PatientId = patientModel.id
+    body.ProfessionalId = professionalModel.id
     db.Appointment.create(body)
       .then((appointment) => {
         res.status(200).json({
@@ -84,8 +84,34 @@ class AppointmentsController {
       })
   }
   static Update(req, res) {
-    const { name, description, active } = req.body
+    const { reviewPatient, status } = req.body
     const id = +req.params.id
+
+    db.Appointment.update(
+      { status, reviewPatient },
+      {
+        where: {
+          id,
+        },
+      },
+    )
+      .then((result) => {
+        if (result[0] === 0) {
+          return res.status(404).json({
+            ok: false,
+            err: RESPONSES.RECORD_NOT_FOUND_ERROR.message,
+          })
+        }
+        res.status(201).json({
+          ok: true,
+          description: RESPONSES.RECORD_UPDATED_SUCCESS.message,
+        })
+      })
+      .catch((err) =>
+        res
+          .status(400)
+          .json({ message: RESPONSES.DB_CONNECTION_ERROR.message }),
+      )
   }
   static Delete(req, res) {
     const { id } = req.params

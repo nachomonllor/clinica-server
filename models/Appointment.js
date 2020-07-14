@@ -26,6 +26,14 @@ export default (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 1
     },
+    reviewPatient: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    reviewProfessional: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -50,6 +58,10 @@ export default (sequelize, DataTypes) => {
       as: 'professional',
       targetKey: 'id',
     });
+    // 1:M
+    Appointment.hasMany(models.Review, {
+      foreignKey: 'AppointmentId',
+    })
   };
 
   return Appointment;

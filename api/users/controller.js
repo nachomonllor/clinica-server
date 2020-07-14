@@ -12,6 +12,7 @@ class UsersController {
       'firstname',
       'lastname',
       'email',
+      'is_verified',
       'img',
       'role',
       'active',
@@ -44,7 +45,7 @@ class UsersController {
       })
   }
   static FetchOne(req, res) {
-    const attrs = ['id', 'firstname', 'lastname', 'email', 'img', 'role']
+    const attrs = ['id', 'firstname', 'lastname', 'email', 'is_verified', 'img', 'role', 'active']
     const id = +req.params.id || 0
     if (id === 0) {
       return
@@ -109,10 +110,10 @@ class UsersController {
       password,
       phone,
       img,
-      categories,
+      categories
     } = req.body
     const active = req.body.active || false
-
+    const is_verified = false;
     const role = +req.body.role
     db.sequelize
       .transaction({ autocommit: false })
@@ -126,6 +127,7 @@ class UsersController {
             phone,
             img,
             role,
+            is_verified,
             active,
           },
           { transaction: t },
@@ -138,7 +140,7 @@ class UsersController {
           )
         }
         if (role === validRoles.Professional) {
-          const timeslot = filterTimeSlot(req.body.timeslot)
+
           const professionalModel = await db.Professional.create(
             { UserId: userModel.id },
             { transaction: t },
@@ -157,13 +159,16 @@ class UsersController {
             await professionalModel.setCategories(categoriesModel, {
               transaction: t,
             })
-            await db.TimeSlot.bulkCreate(
-              timeslot.map((i) => {
-                i.ProfessionalId = professionalModel.id
-                return i
-              }),
-              { transaction: t },
-            )
+            if (timeslot) {
+              const timeslot = filterTimeSlot(req.body.timeslot)
+              await db.TimeSlot.bulkCreate(
+                timeslot.map((i) => {
+                  i.ProfessionalId = professionalModel.id
+                  return i
+                }),
+                { transaction: t },
+              )
+            }
           }
         }
         t.commit()
@@ -186,6 +191,7 @@ class UsersController {
       firstname,
       lastname,
       email,
+      is_verified,
       password,
       phone,
       img,
@@ -198,6 +204,7 @@ class UsersController {
       firstname,
       lastname,
       email,
+      is_verified,
       phone,
       img,
       role,

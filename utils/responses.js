@@ -17,6 +17,10 @@ module.exports = {
     error: true,
     message: 'El registro no puede ser eliminado por que ya está en uso.',
   },
+  RECORD_UPDATED_SUCCESS: {
+    ok: true,
+    message: 'El registro ha sido actualizado.'
+  },
   DELETE_IMAGE_SUCCESS: {
     ok: true,
     msg: 'La foto ha sido eliminada.',
