@@ -65,9 +65,43 @@ class SchedulesController {
         res.status(400).json({ message: RESPONSES.DB_CONNECTION_ERROR.message })
       })
   }
-  static FetchOne(req, res) {
+  static async FetchOne(req, res) {
     const id = +req.params.id
+    const professionalModel = await db.Professional.findOne({
+      where: {
+        UserId: req.user.id
+      }
+    })
     db.Appointment.findOne({
+      include: [
+        {
+          model: db.Category,
+        },
+        {
+          model: db.Patient,
+          attributes: ['id'],
+          include: [
+            {
+              model: db.User,
+              attributes: ['id', 'firstname', 'lastname'],
+            },
+          ],
+        },
+        {
+          model: db.Professional,
+          as: 'professional',
+          attributes: ['id'],
+          include: [
+            {
+              model: db.User,
+              attributes: ['id', 'firstname', 'lastname'],
+            },
+          ],
+          where: {
+            id: professionalModel.id,
+          },
+        },
+      ],
       where: {
         id,
       },
@@ -92,10 +126,11 @@ class SchedulesController {
   }
   static Update(req, res) {
     let { appointmentDate, status, reviewProfessional } = req.body
+    const customFields = JSON.stringify(req.body.customfields);
     status = +status
     const id = +req.params.id
     db.Appointment.update(
-      { appointmentDate, status, reviewProfessional },
+      { appointmentDate, status, reviewProfessional, customFields },
       {
         where: {
           id,
@@ -104,6 +139,7 @@ class SchedulesController {
     )
       .then((result) => {
         if (result[0] === 0) {
+          sendEmail()
           return res.status(404).json({
             ok: false,
             err: RESPONSES.RECORD_NOT_FOUND_ERROR.message,
@@ -121,5 +157,26 @@ class SchedulesController {
       )
   }
 }
-
+function sendEmail() {
+  const data = {
+    to: user.email,
+    from: '"ClinicaMonllor" <clinicamonllor@devkingos.com>', // sender address
+    template: 'review-professional',
+    subject: 'Mensaje de Profesional ',
+    context: {
+      firstname: user.firstname,
+      url: `https://clinica-monllor.herokuapp.com/verify/${user.id}`
+    }
+  };
+  smtpTransport.sendMail(data, function (err) {
+    if (!err) {
+      console.log("Email enviado!");
+      return res.json({ token: true, password: true, reset: true, email: true });
+    } else {
+      console.log(err);
+      console.log("Hubo un error al enviar el email");
+      return res.json({ token: true, password: true, reset: true, email: false });
+    }
+  });
+}
 export default SchedulesController

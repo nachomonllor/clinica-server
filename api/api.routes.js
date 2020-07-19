@@ -6,6 +6,7 @@ import categoryRoutes from './categories/routes';
 import appointmentRoutes from './appointments/routes';
 import scheduleRoutes from './schedules/routes';
 import reviewRoutes from './reviews/routes';
+import surveyRoutes from './survey/routes';
 
 const app = express();
 
@@ -16,5 +17,5 @@ app.use('/category', categoryRoutes);
 app.use('/appointment', appointmentRoutes);
 app.use('/schedule', scheduleRoutes);
 app.use('/review', reviewRoutes);
-
+app.use('/survey', surveyRoutes);
 export default app;

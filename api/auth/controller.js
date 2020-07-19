@@ -4,6 +4,7 @@ import Parametrizer from '../../utils/parametrizer'
 import * as bcrypt from 'bcryptjs'
 import * as jwt from 'jsonwebtoken'
 import * as _ from 'lodash'
+import RESPONSES from '../../utils/responses'
 const validRoles = require('../../utils/validRoles')
 const node_env = process.env.NODE_ENV || 'development'
 const { SEED } = require('../../config/config')[node_env]
@@ -16,7 +17,7 @@ class AuthController {
         where: {
           email: body.email
         },
-      }).then(user => {
+      }).then(async(user) => {
         if (!user.is_verified) {
           return res.status(403).json({
             ok: false,
@@ -40,8 +41,18 @@ class AuthController {
         }
         // Crear un token
         // expira en 4hs
+
         user.password = ':P'
         const token = jwt.sign({ user: user }, SEED, { expiresIn: 14400 })
+        const professionalModel = await db.Professional.findOne({
+          where: {
+            UserId: user.id,
+          },
+        })
+        if(professionalModel) {
+          await db.AuditProfessional.create({ProfessionalId: professionalModel.id})
+        }
+
         const { role } = user
         res.status(200).json({
           ok: true,
@@ -55,7 +66,34 @@ class AuthController {
         res.status(400).json({ message: 'issues trying to connect to database' + err, err })
       })
   }
-
+  static Verify(req, res) {
+    const id = +req.params.id
+    db.User.update(
+      { is_verified : true},
+      {
+        where: {
+          id,
+        },
+      },
+    )
+    .then((result) => {
+        if (result[0] === 0) {
+          return res.status(404).json({
+            ok: false,
+            err: RESPONSES.RECORD_NOT_FOUND_ERROR.message,
+          })
+        }
+        return res.status(201).json({
+          ok: true,
+          description: RESPONSES.RECORD_UPDATED_SUCCESS.message,
+        })
+      })
+      .catch((err) =>
+        res
+          .status(400)
+          .json({ message: RESPONSES.DB_CONNECTION_ERROR.message }),
+      )
+  }
   static RenewToken(req, res) {
     const token = jwt.sign({ user: req.user }, SEED, { expiresIn: 14400 })
     res.status(200).json({
@@ -63,6 +101,7 @@ class AuthController {
       token,
     })
   }
+
 }
 
 function getMenu(role) {
@@ -83,6 +122,7 @@ function getMenu(role) {
   if (containsAdminRole(role)) {
     menu[1].submenu.push({ titulo: 'Usuarios', url: '/users' })
     menu[1].submenu.push({ titulo: 'Especialidades', url: '/categories' })
+    menu[1].submenu.push({ titulo: 'Encuestas', url: '/polls' })
   }
   if (containsProfessionalRole(role)) {
     menu[1].submenu.push({ titulo: 'Turnos', url: '/schedules' })

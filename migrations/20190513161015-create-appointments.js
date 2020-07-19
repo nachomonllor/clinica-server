@@ -34,6 +34,18 @@ module.exports = {
       type: Sequelize.TEXT,
       allowNull: true,
     },
+    surveyProfessional: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    surveyPatient: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
+    customFields: {
+      type: Sequelize.TEXT,
+      allowNull: true,
+    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,

@@ -2,6 +2,7 @@ import db from '../../models'
 import { Sequelize } from '../../models'
 import Parametrizer from '../../utils/parametrizer'
 import RESPONSES from '../../utils/responses'
+import smtpTransport from '../../utils/transport'
 const { Op } = Sequelize
 const validRoles = require('../../utils/validRoles')
 class UsersController {
@@ -28,9 +29,7 @@ class UsersController {
     db.User.findAndCountAll({
       attributes: attrs,
       where,
-      order: [
-        ['id', 'ASC'],
-      ]
+      order: [['id', 'ASC']],
     })
       .then((data) => {
         res.status(200).json(data.rows)
@@ -45,7 +44,16 @@ class UsersController {
       })
   }
   static FetchOne(req, res) {
-    const attrs = ['id', 'firstname', 'lastname', 'email', 'is_verified', 'img', 'role', 'active']
+    const attrs = [
+      'id',
+      'firstname',
+      'lastname',
+      'email',
+      'is_verified',
+      'img',
+      'role',
+      'active',
+    ]
     const id = +req.params.id || 0
     if (id === 0) {
       return
@@ -67,7 +75,7 @@ class UsersController {
               model: db.Category,
               as: 'categories',
               through: ['id'],
-              where
+              where,
             },
             {
               model: db.TimeSlot,
@@ -110,10 +118,10 @@ class UsersController {
       password,
       phone,
       img,
-      categories
+      categories,
     } = req.body
     const active = req.body.active || false
-    const is_verified = false;
+    const is_verified = false
     const role = +req.body.role
     db.sequelize
       .transaction({ autocommit: false })
@@ -140,7 +148,6 @@ class UsersController {
           )
         }
         if (role === validRoles.Professional) {
-
           const professionalModel = await db.Professional.create(
             { UserId: userModel.id },
             { transaction: t },
@@ -175,9 +182,32 @@ class UsersController {
         return userModel
       })
       .then((user) => {
-        res.status(200).json({
-          ok: true,
-          user,
+        const data = {
+          to: user.email,
+          from: '"ClinicaMonllor " <clinicamonllor@devkingos.com>', // sender address
+          template: 'verify-email',
+          subject: 'Verificar Email',
+          context: {
+            firstname: user.firstname,
+            url: `https://clinica-monllor.herokuapp.com/verify/${user.id}`,
+          },
+        }
+        smtpTransport.sendMail(data, function (err) {
+          if (!err) {
+            console.log('Email enviado!')
+            res.json({
+              ok: true,
+              user,
+            })
+          } else {
+            console.log(err)
+            console.log('Hubo un error al enviar el email')
+            res.json({
+              ok: true,
+              user,
+              description: RESPONSES.EMAIL_SEND_FAIL.message
+            })
+          }
         })
       })
       .catch((err) => {

@@ -3,6 +3,10 @@ module.exports = {
     error: true,
     message: 'Error.',
   },
+  EMAIL_SEND_FAIL: {
+    error: true,
+    message: 'Error al enviar email',
+  },
   DELETE_IMAGE_ERROR: {
     ok: false,
     error: true,
