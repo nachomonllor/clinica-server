@@ -119,6 +119,7 @@ class UsersController {
       phone,
       img,
       categories,
+      timeslot
     } = req.body
     const active = req.body.active || false
     const is_verified = false

@@ -11,13 +11,14 @@ const { SEED } = require('../../config/config')[node_env]
 
 class AuthController {
   static Login(req, res) {
-    const { Op } = Sequelize;
+    const { Op } = Sequelize
     const { body } = req
     db.User.findOne({
-        where: {
-          email: body.email
-        },
-      }).then(async(user) => {
+      where: {
+        email: body.email,
+      },
+    })
+      .then(async (user) => {
         if (!user.is_verified) {
           return res.status(403).json({
             ok: false,
@@ -49,8 +50,10 @@ class AuthController {
             UserId: user.id,
           },
         })
-        if(professionalModel) {
-          await db.AuditProfessional.create({ProfessionalId: professionalModel.id})
+        if (professionalModel) {
+          await db.AuditProfessional.create({
+            ProfessionalId: professionalModel.id,
+          })
         }
 
         const { role } = user
@@ -62,21 +65,23 @@ class AuthController {
           menu: getMenu(role),
         })
       })
-      .catch(err => {
-        res.status(400).json({ message: 'issues trying to connect to database' + err, err })
+      .catch((err) => {
+        res
+          .status(400)
+          .json({ message: 'issues trying to connect to database' + err, err })
       })
   }
   static Verify(req, res) {
     const id = +req.params.id
     db.User.update(
-      { is_verified : true},
+      { is_verified: true, active: true },
       {
         where: {
           id,
         },
       },
     )
-    .then((result) => {
+      .then((result) => {
         if (result[0] === 0) {
           return res.status(404).json({
             ok: false,
@@ -101,11 +106,11 @@ class AuthController {
       token,
     })
   }
-
 }
 
 function getMenu(role) {
-  const menu = [{
+  const menu = [
+    {
       titulo: 'Principal',
       icono: 'mdi mdi-gauge',
       submenu: [
@@ -122,7 +127,11 @@ function getMenu(role) {
   if (containsAdminRole(role)) {
     menu[1].submenu.push({ titulo: 'Usuarios', url: '/users' })
     menu[1].submenu.push({ titulo: 'Especialidades', url: '/categories' })
-    menu[1].submenu.push({ titulo: 'Encuestas', url: '/polls' })
+    menu.push({
+      titulo: 'Reportes',
+      icono: 'mdi mdi-folder-lock-open',
+      submenu: [{ titulo: 'Turnos', url: '/reports/schedules' }],
+    })
   }
   if (containsProfessionalRole(role)) {
     menu[1].submenu.push({ titulo: 'Turnos', url: '/schedules' })

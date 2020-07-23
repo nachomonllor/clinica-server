@@ -7,7 +7,7 @@ import appointmentRoutes from './appointments/routes';
 import scheduleRoutes from './schedules/routes';
 import reviewRoutes from './reviews/routes';
 import surveyRoutes from './survey/routes';
-
+import statisticsRoutes from './statistics/routes';
 const app = express();
 
 app.use('/auth', authRoutes);
@@ -18,4 +18,5 @@ app.use('/appointment', appointmentRoutes);
 app.use('/schedule', scheduleRoutes);
 app.use('/review', reviewRoutes);
 app.use('/survey', surveyRoutes);
+app.use('/statistics', statisticsRoutes);
 export default app;
